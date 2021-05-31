@@ -13,9 +13,11 @@ total_kills_knife = stat[9]['value']
 
 total_matches_played = stat[128]['value']
 total_matches_won = stat[127]['value']
-winrate_procent = round(stat[127]['value']/stat[128]['value'],2)
+winrate_procent = str(round(stat[127]['value']/stat[128]['value'],2))[2:]
 total_planted_bombs = stat[3]['value']
 total_defused_bombs = stat[4]['value']
+
+print(winrate_procent)
 
 
 

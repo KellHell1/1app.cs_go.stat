@@ -111,14 +111,20 @@ class Ui_MainWindow(object):
         self.bomb_defused.setText(_translate("MainWindow", "Всего разминировано бомб:"))
 
     def go(self):
-        requests_main = requests.get('http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=A8F344C924ADF251D79C33006F51ABF0&steamid=76561198264607321')
-        requests_stats = requests_main.json()
-        stat = requests_stats['playerstats']['stats']
-        self.vsego_matchey_2.setText(str(stat[128]['value']))
-        self.vsego_pobed_2.setText(str(stat[127]['value']))
-        self.procent_pobed_2.setText(str(round(stat[127]['value'] / stat[128]['value'], 2)))
-        self.bomb_plated_2.setText(str(stat[3]['value']))
-        self.bomb_defused_2.setText(str(stat[4]['value']))
+        ssulka = self.pole_zaprosa.text()
+        acc_id = ssulka[36:]
+        try:
+            requests_main = requests.get(f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=A8F344C924ADF251D79C33006F51ABF0&steamid={acc_id}')
+            requests_stats = requests_main.json()
+            stat = requests_stats['playerstats']['stats']
+            self.vsego_matchey_2.setText(str(stat[128]['value']))
+            self.vsego_pobed_2.setText(str(stat[127]['value']))
+            self.procent_pobed_2.setText(str(round(stat[127]['value']/stat[128]['value'],2))[2:])
+            self.bomb_plated_2.setText(str(stat[3]['value']))
+            self.bomb_defused_2.setText(str(stat[4]['value']))
+        except:
+            self.pole_zaprosa.setText('')
+            self.data_time.setText('Ошибка.Проверьте правильность ссылки!')
 
 
     def poisk(self):
