@@ -122,6 +122,7 @@ class Ui_MainWindow(object):
             self.procent_pobed_2.setText(str(round(stat[127]['value']/stat[128]['value'],2))[2:])
             self.bomb_plated_2.setText(str(stat[3]['value']))
             self.bomb_defused_2.setText(str(stat[4]['value']))
+            self.data_time.setText(str(datetime.datetime.now())[:-7])
         except:
             self.pole_zaprosa.setText('')
             self.data_time.setText('Ошибка.Проверьте правильность ссылки!')
