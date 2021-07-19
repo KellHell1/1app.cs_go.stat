@@ -2,7 +2,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import datetime
 import requests
+import json
 
+#блок кода дизайна
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -100,6 +102,7 @@ class Ui_MainWindow(object):
 
         self.poisk()
 
+    #создание кнопок
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -110,23 +113,31 @@ class Ui_MainWindow(object):
         self.bomb_plated.setText(_translate("MainWindow", "Всего заложено бомб:"))
         self.bomb_defused.setText(_translate("MainWindow", "Всего разминировано бомб:"))
 
+    #функция делает запрос по ссылке введенной в главную строку
     def go(self):
+        slv ={}
         ssulka = self.pole_zaprosa.text()
         acc_id = ssulka[36:]
         try:
+            #делаем запрос
             requests_main = requests.get(f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=A8F344C924ADF251D79C33006F51ABF0&steamid={acc_id}')
             requests_stats = requests_main.json()
-            stat = requests_stats['playerstats']['stats']
-            self.vsego_matchey_2.setText(str(stat[128]['value']))
-            self.vsego_pobed_2.setText(str(stat[127]['value']))
-            self.procent_pobed_2.setText(str(round(stat[127]['value']/stat[128]['value'],2))[2:])
-            self.bomb_plated_2.setText(str(stat[3]['value']))
-            self.bomb_defused_2.setText(str(stat[4]['value']))
-        except:
+            #оформляем всё в словарь
+            for x in requests_stats['playerstats']['stats']:
+                slv.setdefault(x['name'], x['value'])
+            #заполняем ячейки информацией
+            self.vsego_matchey_2.setText(str(slv['total_matches_played']))
+            self.vsego_pobed_2.setText(str(slv['total_matches_won']))
+            self.procent_pobed_2.setText(str(round(slv['total_matches_played']/slv['total_matches_won'],2))[2:])
+            self.bomb_plated_2.setText(str(slv['total_planted_bombs']))
+            self.bomb_defused_2.setText(str(slv['total_defused_bombs']))
+            self.data_time.setText(str(datetime.datetime.now())[:-7])
+        #если пользователь ввёл не корректную ссылку
+        except Exception:
             self.pole_zaprosa.setText('')
             self.data_time.setText('Ошибка.Проверьте правильность ссылки!')
 
-
+    #запрос идёт после нажатия кнопки 'Поиска'
     def poisk(self):
         self.zapros.clicked.connect(lambda: self.go())
 
